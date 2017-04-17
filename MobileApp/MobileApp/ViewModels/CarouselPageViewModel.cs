@@ -22,21 +22,19 @@ namespace MobileApp.ViewModels
 				PreviousItem = CurrentItem;
 				currentItem = value;
 				CurrentSlide = Images.IndexOf(currentItem) + 1;
-				AsyncRequest(previosSlide - CurrentSlide);
+				SendCommand();
 			}
 		}
 		public int AllSlides { get; private set; }
 		public CarouselItem PreviousItem { get; set; }
 		private string Address { get; set; }
 		private ClientConnection cc = new ClientConnection(1024, 4);
-		private int previosSlide;
 		private int currentSlide;
 		public int CurrentSlide
 		{
 			get => currentSlide;
 			set
 			{
-				previosSlide = currentSlide;
 				currentSlide = value;
 				try
 				{
@@ -111,11 +109,28 @@ namespace MobileApp.ViewModels
 		{
 			try
 			{
-				List<ImageSource> v = await cc.Connection(Address);
+				//List<ImageSource> v = await cc.Connection(Address);
 			}
 			catch { }
 
 		}
+		private void SendCommand()
+		{
+			int number = Images.IndexOf(PreviousItem) - Images.IndexOf(CurrentItem);
+			switch (number)
+			{
+				case -1:
+					AsyncRequest(-1);
+					break;
+				case 1:
+					AsyncRequest(1);
+					break;
+				default:
+					AsyncRequest(number);
+					break;
+			}
+		}
+
 		private async void AsyncRequest(int message)
 		{
 			try
