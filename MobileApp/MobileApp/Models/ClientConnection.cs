@@ -8,28 +8,30 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
+//!!!ПЕРЕД ЗАВЕРШЕНИЕМ РАБОТЫ НУЖНО ВЫЗЫВАТЬ Shutdown() - закрытие сокетов
+
 namespace MobileApp.Models
 {
-	class ClientConnection
+	public class ClientConnection
 	{
 		// Порт
-		static int port = 1800;
+		private static int port = 1800;
 		// Адрес
-		static IPAddress ipAddress;
+		private static IPAddress ipAddress;
 		// Локальная конечная точка
-		IPEndPoint ipEndPoint;
+		private IPEndPoint ipEndPoint;
 		// Сокет
-		Socket socket;
+		private Socket socket;
 		//Размер буфера для изображений
-		int imageBufferLength;
+		private int imageBufferLength;
 		//Размер буфера для метаданных
-		int metaBufferLength;
+		private int metaBufferLength;
 		//Событие принятия команды
-		ManualResetEvent commandEvent;
+		private AutoResetEvent commandEvent;
 		//Идет загрузка изображений
-		bool uploadingImages = true;
+		private bool uploadingImages = true;
 		//Ответ
-		int response;
+		private int response;
 		//Список изображений
 		List<ImageSource> images = new List<ImageSource>();
 
@@ -39,32 +41,25 @@ namespace MobileApp.Models
 			this.metaBufferLength = metaBufferLength;
 		}
 
-		public Task<List<ImageSource>> Connection(object message)
-		{
-			return null;
-			//return Task.Run(() =>
-			//{
-			//	Configure((string)message);
-			//	commandEvent = new ManualResetEvent(false);
-			//	string presentationName = GetPresentationName();
-			//	//Console.WriteLine(presentationName);
-			//	int slidesCount = GetSlidesCount();
-			//	int i = 1;
-			//	while (i <= slidesCount)
-			//	{
-			//		if (ReceiveDistributor() == 0)
-			//		{
-			//			i++;
-			//		}
-			//	}
-			//	uploadingImages = false;
-			//	return images;
-			//});
-		}
+		public Task<List<ImageSource>> Connection(object message) => Task.Run(() =>
+																			   {
+																				   Configure((string)message);
+																				   commandEvent = new AutoResetEvent(false);
+																				   GetPresentationName();
+																				   int slidesCount = GetSlidesCount();
+																				   int i = 1;
+																				   while (i <= slidesCount)
+																				   {
+																					   if (ReceiveDistributor() == 0)
+																						   i++;
+																				   }
+																				   uploadingImages = false;
+																				   return images;
+																			   });
 
 		public void Configure(string IP)
 		{
-			ipAddress = IPAddress.Parse("192.168.0.2"); //присваиваем IP-адрес
+			ipAddress = IPAddress.Parse("192.168.0.7"); //присваиваем IP-адрес
 														//ipAddress = IPAddress.Parse(IP); //присваиваем IP-адрес
 			ipEndPoint = new IPEndPoint(ipAddress, port); // создаем локальную конечную точку
 			socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp); // создаем основной сокет
@@ -92,9 +87,8 @@ namespace MobileApp.Models
 		{
 			byte[] receiveMetaBuffer = new byte[metaBufferLength]; //буфер для метаданных
 			socket.Receive(receiveMetaBuffer); //записываем метаданные
-			string strCode = Encoding.Unicode.GetString(receiveMetaBuffer);
 			int intCode = BitConverter.ToInt32(receiveMetaBuffer, 0);
-			if (strCode == "-1" || strCode == "-2")
+			if (intCode == -1 || intCode == -2)
 			{
 				response = intCode;
 				commandEvent.Set();
@@ -116,7 +110,7 @@ namespace MobileApp.Models
 
 		public byte[] ReceiveImage(int countBytes, int bufferLength)
 		{
-			//Console.WriteLine("countBytes - " + countBytes);
+			Console.WriteLine("countBytes - " + countBytes);
 			byte[] byteArray = new byte[countBytes]; //создаем буфер для всей картинки
 			int receiveBytes = 0; //общее количество принятых байт и рулетка в одном лице
 			while (receiveBytes < countBytes)
@@ -126,31 +120,29 @@ namespace MobileApp.Models
 				receiveBuffer.CopyTo(byteArray, receiveBytes); //сохраняем принятые байты в хранилище
 				receiveBytes += bytes; //сдвигаем индекс и суммируем общее количество принятых байт
 			}
-			//Console.WriteLine("Пришло - " + receiveBytes);
+			Console.WriteLine("Пришло - " + receiveBytes);
 			return byteArray;
 		}
 
-		public Task<int> Request(string message)
-		{
-			return Task.Run(() =>
-			{
-				SendCode(message);
-				if (uploadingImages)
-				{
-					commandEvent.WaitOne();
-					commandEvent.Reset();
-				}
-				else
-					response = ReceiveCode();
+		public Task<int> Request(int message) => Task.Run(() =>
+														   {
+															   SendCode(message);
+															   if (uploadingImages)
+															   {
+																   commandEvent.WaitOne();
+															   }
+															   else
+															   {
+																   response = ReceiveCode();
+															   }
 
-				//Console.WriteLine("ClientTask - " + response);
-				return response;
-			});
-		}
+															   Console.WriteLine("ClientTask - " + response);
+															   return response;
+														   });
 
-		public void SendCode(string message)
+		public void SendCode(int message)
 		{
-			byte[] sendBuffer = Encoding.Unicode.GetBytes(message); // массив с данными
+			byte[] sendBuffer = BitConverter.GetBytes(message); // массив с данными
 			socket.Send(sendBuffer);
 		}
 
