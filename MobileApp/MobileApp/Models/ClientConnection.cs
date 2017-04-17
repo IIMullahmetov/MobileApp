@@ -51,7 +51,9 @@ namespace MobileApp.Models
 																				   while (i <= slidesCount)
 																				   {
 																					   if (ReceiveDistributor() == 0)
+																					   {
 																						   i++;
+																					   }
 																				   }
 																				   uploadingImages = false;
 																				   return images;
