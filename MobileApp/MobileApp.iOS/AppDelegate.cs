@@ -24,7 +24,8 @@ namespace MobileApp.iOS
 		{
 			global::Xamarin.Forms.Forms.Init ();
 			LoadApplication (new MobileApp.App ());
-
+			MobileApp.App.Height = (int) UIScreen.MainScreen.Bounds.Height;
+			App.Width = (int) UIScreen.MainScreen.Bounds.Width;
 			return base.FinishedLaunching (app, options);
 		}
 	}

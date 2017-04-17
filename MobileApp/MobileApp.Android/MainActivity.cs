@@ -1,10 +1,5 @@
-﻿using System;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
 
 namespace MobileApp.Droid
@@ -15,12 +10,13 @@ namespace MobileApp.Droid
 		protected override void OnCreate (Bundle bundle)
 		{
 			TabLayoutResource = Resource.Layout.Tabbar;
-			ToolbarResource = Resource.Layout.Toolbar; 
-
+			ToolbarResource = Resource.Layout.Toolbar;
 			base.OnCreate (bundle);
-
 			global::Xamarin.Forms.Forms.Init (this, bundle);
 			LoadApplication (new MobileApp.App ());
+			Android.Util.DisplayMetrics v = Resources.DisplayMetrics;
+			App.Height = v.HeightPixels;
+			App.Width = v.WidthPixels;
 		}
 	}
 }

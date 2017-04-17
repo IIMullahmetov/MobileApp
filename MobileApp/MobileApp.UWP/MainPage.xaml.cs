@@ -20,8 +20,12 @@ namespace MobileApp.UWP
         public MainPage()
         {
             this.InitializeComponent();
-
-            LoadApplication(new MobileApp.App());
+			Rect windowSize = Window.Current.Bounds;
+			double windowHeight = windowSize.Height;
+			double windowWidth = windowSize.Width;
+			LoadApplication(new MobileApp.App());
+			MobileApp.App.Height = (int)windowHeight;
+			MobileApp.App.Width = (int)windowWidth;
         }
     }
 }

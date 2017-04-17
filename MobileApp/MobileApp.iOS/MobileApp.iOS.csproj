@@ -88,6 +88,7 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FileWorker.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <None Include="Entitlements.plist" />
@@ -116,9 +117,15 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="ExifLib, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ExifLib.PCL.1.0.2-pre01\lib\netstandard1.0\ExifLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
+    <Reference Include="Xamarin.Forms.CarouselView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.Forms.CarouselView.2.3.0-pre2\lib\Xamarin.iOS10\Xamarin.Forms.CarouselView.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Forms.2.3.4.224\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
     </Reference>
@@ -132,6 +139,51 @@
       <HintPath>..\..\packages\Xamarin.Forms.2.3.4.224\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.iOS" />
+    <Reference Include="XLabs.Core, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XLabs.Core.2.3.0-pre05\lib\netstandard1.0\XLabs.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="XLabs.IOC, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XLabs.IoC.2.3.0-pre05\lib\netstandard1.0\XLabs.IOC.dll</HintPath>
+    </Reference>
+    <Reference Include="XLabs.Platform, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XLabs.Platform.2.3.0-pre05\lib\xamarinios10\XLabs.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="XLabs.Platform.iOS, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XLabs.Platform.2.3.0-pre05\lib\xamarinios10\XLabs.Platform.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="XLabs.Serialization, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XLabs.Serialization.2.3.0-pre05\lib\NETStandard1.0\XLabs.Serialization.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Slides\Image_10.png" />
   </ItemGroup>
   <Import Project="..\MobileApp\MobileApp.projitems" Label="Shared" Condition="Exists('..\MobileApp\MobileApp.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
