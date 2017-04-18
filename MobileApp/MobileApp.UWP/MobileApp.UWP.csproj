@@ -147,8 +147,6 @@
     <Content Include="Resources\Slides\Image_04.png" />
     <Content Include="Resources\Slides\Image_03.png" />
     <Content Include="Resources\Slides\Image_02.png" />
-    <Content Include="selected_circle.png" />
-    <Content Include="unselected_circle.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

@@ -52,10 +52,12 @@ namespace MobileApp.Droid
 				await writer.WriteAsync(text);
 			}
 		}
+
 		// вспомогательный метод для построения пути к файлу
 		string GetFilePath(string filename) => Path.Combine(GetDocsPath(), filename);
 		// получаем путь к папке MyDocuments
 		string GetDocsPath() => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+		
 		public void WriteStream(string filename, Stream streamIn)
 		{
 			string filePath = GetFilePath(filename);
@@ -63,7 +65,6 @@ namespace MobileApp.Droid
 			{
 				streamIn.CopyTo(fs);
 			}
-
 		}
 	}
 }

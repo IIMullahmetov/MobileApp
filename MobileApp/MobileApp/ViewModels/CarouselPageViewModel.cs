@@ -1,5 +1,6 @@
 ﻿using MobileApp.Models;
 using MobileApp.Services;
+using PCLStorage;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -11,7 +12,7 @@ namespace MobileApp.ViewModels
 {
     public class CarouselPageViewModel : BaseViewModel
     {
-		public int Height => App.Height / 3;
+		public int Height => App.Height / 4;
 		public ObservableCollection<CarouselItem> Images { get; set; }
 		private CarouselItem currentItem;
 		public CarouselItem CurrentItem
@@ -25,7 +26,6 @@ namespace MobileApp.ViewModels
 				SendCommand();
 			}
 		}
-		public int AllSlides { get; private set; }
 		public CarouselItem PreviousItem { get; set; }
 		private string Address { get; set; }
 		private ClientConnection cc = new ClientConnection(1024, 4);
@@ -43,21 +43,18 @@ namespace MobileApp.ViewModels
 				}
 				catch
 				{
-					Position = AllSlides;
+					Position = Images.Count;
 					CurrentSlide = Position;
 				}		
 				OnPropertyChanged("CurrentSlide");
 			}
 		}
 		public Command LoadItemsCommand { get; set; }
-		public ObservableCollection<CarouselItem> Indicators { get; set; }
 		public CarouselPageViewModel(string address)
 		{
 			Images = new ObservableCollection<CarouselItem>();
-			Indicators = new ObservableCollection<CarouselItem>();
 			Address = address;
 			LoadItemsCommand = new Command(async () => await AsyncConnection());
-			//Get();
 			for (int i = 1; i < 10; i++)
 			{
 				Images.Add(new CarouselItem()
@@ -71,36 +68,12 @@ namespace MobileApp.ViewModels
 				)
 #pragma warning restore CS0618 // Тип или член устарел
 				});
-				Indicators.Add(new CarouselItem()
-				{
-#pragma warning disable CS0618 // Тип или член устарел
-					SourceOfImage =
-					Device.OnPlatform(
-						iOS: "Slides/Image_0" + i + ".png",
-						Android: "Image_0" + i + ".png",
-						WinPhone: "Resources/Slides/Image_0" + i + ".png"
-					)	
-#pragma warning restore CS0618 // Тип или член устарел
-				});
 			}
-			//int j = 1;
-			//foreach (CarouselItem image in Images)
-			//{
-			//	using (MemoryStream stream = new MemoryStream())
-			//	{
-			//		ImageSource f = FileImageSource.FromResource(image.SourceOfImage);
-			//		byte[] b =  File.ReadAllBytes(image.SourceOfImage);
-			//		stream.Write(b, 0, b.Length);
-			//		DependencyService.Get<IFileWorker>().WriteStream("slide_" + j, stream);//записываем изображение в памаять устройства
-			//	}
-			//	j++;
-			//}
+
 			PlayCommand = new Command(() => AsyncRequest(-3));
 			StopCommand = new Command(() => AsyncRequest(-4));
 			ExitCommand = new Command(() => AsyncRequest(-5));
-			AllSlides = Images.Count;
 			CurrentSlide = 1;
-			//Title = cc.GetPresentationName();
 		}
 		public ICommand ExitCommand { get; set; }
 		public ICommand PlayCommand { get; set; }
@@ -109,7 +82,7 @@ namespace MobileApp.ViewModels
 		{
 			try
 			{
-				//List<ImageSource> v = await cc.Connection(Address);
+				List<ImageSource> v = await cc.Connection(Address);
 			}
 			catch { }
 

@@ -1,4 +1,5 @@
 ﻿using MobileApp.Services;
+using PCLStorage;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -50,7 +51,7 @@ namespace MobileApp.Models
 																				   int i = 1;
 																				   while (i <= slidesCount)
 																				   {
-																					   if (ReceiveDistributor() == 0)
+																					   if (ReceiveDistributor(i) == 0)
 																					   {
 																						   i++;
 																					   }
@@ -85,7 +86,7 @@ namespace MobileApp.Models
 			return BitConverter.ToInt32(receiveMetaBuffer, 0); //узнаем количество слайдов, которые нам придут
 		}
 
-		public int ReceiveDistributor()
+		public int ReceiveDistributor(int i)
 		{
 			byte[] receiveMetaBuffer = new byte[metaBufferLength]; //буфер для метаданных
 			socket.Receive(receiveMetaBuffer); //записываем метаданные
@@ -98,21 +99,32 @@ namespace MobileApp.Models
 			}
 			else
 			{
-				SetImage(intCode);
+				SetImage(intCode, i);
 				return 0;
 			}
 		}
 
-		public void SetImage(int meta)
+		public void SetImage(int meta, int  i)
 		{
 			byte[] byteImage = ReceiveImage(meta, imageBufferLength);
 			ImageSource image = ClientImageConverter.ByteArrayToImage(byteImage);
+			//Write(i, byteImage);
 			images.Add(image);
 		}
 
+		//public async void Write(int i, byte[] image)
+		//{
+		//	IFolder folder = FileSystem.Current.LocalStorage;
+		//	IFile file = await folder.CreateFileAsync("slide" + i, CreationCollisionOption.ReplaceExisting);
+		//	using (System.IO.Stream stream = await file.OpenAsync(FileAccess.ReadAndWrite))
+		//	{
+		//		stream.Write(image, 0, image.Length);
+		//	}
+		//}
+
 		public byte[] ReceiveImage(int countBytes, int bufferLength)
 		{
-			Console.WriteLine("countBytes - " + countBytes);
+			//Console.WriteLine("countBytes - " + countBytes);
 			byte[] byteArray = new byte[countBytes]; //создаем буфер для всей картинки
 			int receiveBytes = 0; //общее количество принятых байт и рулетка в одном лице
 			while (receiveBytes < countBytes)
@@ -122,7 +134,7 @@ namespace MobileApp.Models
 				receiveBuffer.CopyTo(byteArray, receiveBytes); //сохраняем принятые байты в хранилище
 				receiveBytes += bytes; //сдвигаем индекс и суммируем общее количество принятых байт
 			}
-			Console.WriteLine("Пришло - " + receiveBytes);
+			//Console.WriteLine("Пришло - " + receiveBytes);
 			return byteArray;
 		}
 
@@ -138,7 +150,7 @@ namespace MobileApp.Models
 																   response = ReceiveCode();
 															   }
 
-															   Console.WriteLine("ClientTask - " + response);
+															   //Console.WriteLine("ClientTask - " + response);
 															   return response;
 														   });
 
