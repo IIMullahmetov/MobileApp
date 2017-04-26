@@ -1,10 +1,18 @@
-﻿
-namespace MobileApp.ViewModels
+﻿namespace MobileApp.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-		public string Address { get; set; }
-
+		private string address;
+		public string Address
+		{
+			get => address;
+			set
+			{
+				address = value;
+				OnPropertyChanged("Address");
+			}
+		}
+		
 		public ItemsViewModel()
 		{
 			Title = "Browse";

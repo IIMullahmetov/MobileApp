@@ -1,9 +1,11 @@
 ﻿using MobileApp.Models;
 using MobileApp.Services;
 using PCLStorage;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -12,7 +14,8 @@ namespace MobileApp.ViewModels
 {
     public class CarouselPageViewModel : BaseViewModel
     {
-		public int Height => App.Height / 4;
+		public Views.CarouselPage View { get; set; }
+		public int Height => App.Height / 2;
 		public ObservableCollection<CarouselItem> Images { get; set; }
 		private CarouselItem currentItem;
 		public CarouselItem CurrentItem
@@ -28,8 +31,8 @@ namespace MobileApp.ViewModels
 		}
 		public CarouselItem PreviousItem { get; set; }
 		private string Address { get; set; }
-		private ClientConnection cc = new ClientConnection(1024, 4);
-		private int currentSlide;
+		private ClientConnection cc;
+		private int currentSlide = 1;
 		public int CurrentSlide
 		{
 			get => currentSlide;
@@ -41,52 +44,45 @@ namespace MobileApp.ViewModels
 					currentItem = Images[currentSlide - 1];
 					Position = value - 1;
 				}
-				catch
-				{
-					Position = Images.Count;
-					CurrentSlide = Position;
-				}		
+				catch { }
 				OnPropertyChanged("CurrentSlide");
 			}
 		}
-		public Command LoadItemsCommand { get; set; }
+		
 		public CarouselPageViewModel(string address)
 		{
 			Images = new ObservableCollection<CarouselItem>();
+			cc = new ClientConnection(1024, 4); 
 			Address = address;
-			LoadItemsCommand = new Command(async () => await AsyncConnection());
-			for (int i = 1; i < 10; i++)
-			{
-				Images.Add(new CarouselItem()
-				{
-#pragma warning disable CS0618 // Тип или член устарел
-					SourceOfImage =
-					Device.OnPlatform(
-						iOS: "Slides/Image_0" + i + ".png",
-						Android: "Image_0" + i + ".png",
-						WinPhone: "Resources/Slides/Image_0" + i + ".png"
-				)
-#pragma warning restore CS0618 // Тип или член устарел
-				});
-			}
-
+			AsyncConnection();
 			PlayCommand = new Command(() => AsyncRequest(-3));
 			StopCommand = new Command(() => AsyncRequest(-4));
 			ExitCommand = new Command(() => AsyncRequest(-5));
-			CurrentSlide = 1;
 		}
+		public ICommand LoadItemsCommand { get; set; }
 		public ICommand ExitCommand { get; set; }
 		public ICommand PlayCommand { get; set; }
 		public ICommand StopCommand { get; set; }
-		private async Task AsyncConnection()
+		private async void AsyncConnection()
 		{
-			try
+			List<ImageSource> list = await cc.Connection(Address);
+			foreach (ImageSource source in list)
 			{
-				List<ImageSource> v = await cc.Connection(Address);
+				Images.Add(new CarouselItem() { Source = source });
 			}
-			catch { }
+			IEnumerable<string> collection = await DependencyService.Get<IFileWorker>().GetFilesAsync();
+			string path = DependencyService.Get<IFileWorker>().GetLocalFolderPath() + "\\";
+			foreach (string source in collection)
+			{
+				//DependencyService.Get<IFileWorker>().DeleteAsync(source);
+				Images.Add(new CarouselItem() { Source = path + source, SourceOfImage = path + source });
+			}
 
+			Title = cc.Title;
+			View.SetElements();
+			View.ChangeView();
 		}
+
 		private void SendCommand()
 		{
 			int number = Images.IndexOf(PreviousItem) - Images.IndexOf(CurrentItem);
@@ -96,10 +92,10 @@ namespace MobileApp.ViewModels
 					AsyncRequest(-1);
 					break;
 				case 1:
-					AsyncRequest(1);
+					AsyncRequest(-2);
 					break;
 				default:
-					AsyncRequest(number);
+					AsyncRequest(CurrentSlide);
 					break;
 			}
 		}
@@ -117,7 +113,7 @@ namespace MobileApp.ViewModels
 			}
 		}
 
-		private int _position;
+		private int _position = 0;
 		public int Position
 		{
 			get => _position;

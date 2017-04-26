@@ -39,6 +39,12 @@ namespace MobileApp.UWP
 			return filenames;
 		}
 
+		public string GetLocalFolderPath()
+		{
+			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+			return localFolder.Path;
+		}
+
 		public async Task<string> LoadTextAsync(string filename)
 		{
 			StorageFolder localFolder = ApplicationData.Current.LocalFolder;

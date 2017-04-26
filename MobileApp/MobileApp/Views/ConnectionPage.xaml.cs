@@ -13,12 +13,10 @@ namespace MobileApp.Views
 		public ConnectionPage()
 		{
 			InitializeComponent();
-
 			BindingContext = viewModel = new ItemsViewModel();
 		}
 
-		private async void Button_Clicked(object sender, EventArgs e) =>
+		private async void Button_Clicked(object sender, EventArgs e) => 
 			await Navigation.PushAsync(new CarouselPage(new CarouselPageViewModel(viewModel.Address)));
-		//await Navigation.PushAsync(new MainPage());
 	}
 }

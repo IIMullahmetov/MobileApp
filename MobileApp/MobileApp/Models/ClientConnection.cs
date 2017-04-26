@@ -2,6 +2,7 @@
 using PCLStorage;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -15,6 +16,8 @@ namespace MobileApp.Models
 {
 	public class ClientConnection
 	{
+
+		public string Title { get; private set; }
 		// Порт
 		private static int port = 1800;
 		// Адрес
@@ -34,7 +37,10 @@ namespace MobileApp.Models
 		//Ответ
 		private int response;
 		//Список изображений
-		List<ImageSource> images = new List<ImageSource>();
+		private List<ImageSource> images = new List<ImageSource>();
+		//private List<string> sources = new List<string>();
+
+		private ClientImageConverter im = new ClientImageConverter();
 
 		public ClientConnection(int imageBufferLength, int metaBufferLength)
 		{
@@ -46,7 +52,7 @@ namespace MobileApp.Models
 																			   {
 																				   Configure((string)message);
 																				   commandEvent = new AutoResetEvent(false);
-																				   GetPresentationName();
+																				   Title = GetPresentationName();
 																				   int slidesCount = GetSlidesCount();
 																				   int i = 1;
 																				   while (i <= slidesCount)
@@ -58,12 +64,36 @@ namespace MobileApp.Models
 																				   }
 																				   uploadingImages = false;
 																				   return images;
+																				   //																				   for (int i = 1; i < 10; i++)
+																				   //																				   {
+																				   //#pragma warning disable CS0618 // Тип или член устарел	
+
+																				   //																					   images.Add(Device.OnPlatform(
+																				   //																							  iOS: "Slides/Image_0" + i + ".png",
+																				   //																							  Android: "Image_0" + i + ".png",
+																				   //																							  WinPhone: "Resources/Slides/Image_0" + i + ".png"
+																				   //																						  ));
+																				   //																					   //using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+																				   //																					   //{
+
+																				   //																						  // byte[] file = System.IO.File.ReadAllBytes("Resources/Slides/Image_0" + i + ".png");
+																				   //																						  // file.SaveImage("file_" + i + ".png");
+
+																				   //																					   //}
+																				   //																					   //IFolder folder = FileSystem.Current.LocalStorage;
+																				   //																					   //Task<IFile> fil = folder.GetFileAsync("file_" + i + ".png");
+																				   //																					   ////byte[] f = System.IO.File.ReadAllBytes("file_" + i + ".png");
+
+
+																				   //#pragma warning restore CS0618 // Тип или член устарел
+																				   //																				   }
+																				   //																				   return images;
 																			   });
 
 		public void Configure(string IP)
 		{
-			ipAddress = IPAddress.Parse("192.168.0.7"); //присваиваем IP-адрес
-														//ipAddress = IPAddress.Parse(IP); //присваиваем IP-адрес
+			//ipAddress = IPAddress.Parse("10.17.2.204"); //присваиваем IP-адрес
+			ipAddress = IPAddress.Parse(IP); //присваиваем IP-адрес
 			ipEndPoint = new IPEndPoint(ipAddress, port); // создаем локальную конечную точку
 			socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp); // создаем основной сокет
 			socket.Connect(ipEndPoint);
@@ -104,23 +134,23 @@ namespace MobileApp.Models
 			}
 		}
 
-		public void SetImage(int meta, int  i)
+		public void SetImage(int meta, int i)
 		{
-			byte[] byteImage = ReceiveImage(meta, imageBufferLength);
-			ImageSource image = ClientImageConverter.ByteArrayToImage(byteImage);
-			//Write(i, byteImage);
-			images.Add(image);
+			byte[] byteImage = ReceiveImage(meta, imageBufferLength);	 
+			Save(byteImage, i);
+			//images.Add(image);
+			
 		}
 
-		//public async void Write(int i, byte[] image)
-		//{
-		//	IFolder folder = FileSystem.Current.LocalStorage;
-		//	IFile file = await folder.CreateFileAsync("slide" + i, CreationCollisionOption.ReplaceExisting);
-		//	using (System.IO.Stream stream = await file.OpenAsync(FileAccess.ReadAndWrite))
-		//	{
-		//		stream.Write(image, 0, image.Length);
-		//	}
-		//}
+		private async void Save(byte[] byteImage, int i)
+		{
+			await byteImage.SaveImage("slide_" + i + ".png");
+			//DependencyService.Get<IFileWorker>().DeleteAsync("slide_" + i);
+			//await byteImage.LoadImage("slide_" + i);
+			//ImageSource image = ClientImageConverter.ByteArrayToImage(byteImage);
+			//images.Add(image);
+		}
+			
 
 		public byte[] ReceiveImage(int countBytes, int bufferLength)
 		{
@@ -181,5 +211,39 @@ namespace MobileApp.Models
                             }
                         }
         */
+	}
+
+	public static class WorkWithSorage
+	{
+		public async static Task SaveImage(this byte[] image, string fileName, IFolder rootFolder = null)
+		{
+			// get hold of the file system  
+			IFolder folder = rootFolder ?? FileSystem.Current.LocalStorage;
+			// create a file, overwriting any existing file  
+			IFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+			// populate the file with image data  
+			using (System.IO.Stream stream = await file.OpenAsync(FileAccess.ReadAndWrite))
+			{
+				stream.Write(image, 0, image.Length);
+			}
+		}
+
+		public async static Task<byte[]> LoadImage(this byte[] image, string fileName, IFolder rootFolder = null)
+		{
+			// get hold of the file system  
+			IFolder folder = rootFolder ?? FileSystem.Current.LocalStorage;
+
+			//open file if exists  
+			IFile file = await folder.GetFileAsync(fileName);
+			//load stream to buffer  
+			using (System.IO.Stream stream = await file.OpenAsync(FileAccess.ReadAndWrite))
+			{
+				long length = stream.Length;
+				byte[] streamBuffer = new byte[length];
+				stream.Read(streamBuffer, 0, (int)length);
+				return streamBuffer;
+			}
+
+		}
 	}
 }

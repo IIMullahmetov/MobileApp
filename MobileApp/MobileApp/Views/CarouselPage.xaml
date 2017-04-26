@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:cv="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.CarouselView"
-             x:Class="MobileApp.Views.CarouselPage" 
+             x:Class="MobileApp.Views.CarouselPage"			 
 			 Title="{Binding Title}">
 	<Grid x:Name="MainGrid">
 		<ScrollView>
@@ -10,22 +10,22 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="{Binding Height}"/>
-					<RowDefinition Height="75"/>
+					<RowDefinition Height="100"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
-				<StackLayout Grid.Row="0" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+				<StackLayout  Grid.Row="0" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
 					<Entry Margin="0,5,0,0" Text="{Binding CurrentSlide}" Keyboard="Numeric"/>
 					<Label Margin="0,5,0,0" Text=" / " VerticalOptions="Center"/>
 					<Entry Margin="0,5,0,0" Text="{Binding Images.Count}"  IsEnabled="False" VerticalOptions="Center"/>
 				</StackLayout>
 				<StackLayout Grid.Row="1">
-					<cv:CarouselView ItemsSource="{Binding Images}" MinimumHeightRequest="150" ItemSelected="CarouselImages_ItemSelected" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White" Position="{Binding Position, Mode=TwoWay}">
+					<cv:CarouselView x:Name="Carousel" ItemsSource="{Binding Images}" MinimumHeightRequest="150" ItemSelected="CarouselImages_ItemSelected" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White" Position="{Binding Position, Mode=TwoWay}">
 						<cv:CarouselView.ItemTemplate>
 							<DataTemplate>
 								<StackLayout>
-									<Image Source="{Binding SourceOfImage}"/>
+									<Image Source="{Binding SourceOfImage}" Aspect="AspectFit" VerticalOptions="CenterAndExpand"/>
 								</StackLayout>
 							</DataTemplate>
 						</cv:CarouselView.ItemTemplate>

@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BaseViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CarouselPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\ActivityView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CarouselPage.xaml.cs">
       <DependentUpon>CarouselPage.xaml</DependentUpon>
       <SubType>Code</SubType>
