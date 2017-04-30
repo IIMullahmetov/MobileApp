@@ -14,6 +14,7 @@ namespace MobileApp.Views
 		{
 			InitializeComponent();
 			BindingContext = viewModel = new ItemsViewModel();
+			viewModel.ClearFolder();
 		}
 
 		private async void Button_Clicked(object sender, EventArgs e) => 

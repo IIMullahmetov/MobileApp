@@ -1,7 +1,23 @@
-﻿namespace MobileApp.ViewModels
+﻿using MobileApp.Models;
+using MobileApp.Services;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Xamarin.Forms;
+
+namespace MobileApp.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
+		private string title;
+		public string Title
+		{
+			get => title;
+			set
+			{
+				title = value;
+				OnPropertyChanged("Title");
+			}
+		}
 		private string address;
 		public string Address
 		{
@@ -16,7 +32,16 @@
 		public ItemsViewModel()
 		{
 			Title = "Browse";
-			Address = "192.168.0.1";
+			Address = "192.168.1.11";
+		}
+
+		public async void ClearFolder()
+		{
+			IEnumerable<string> collection = await DependencyService.Get<IFileWorker>().GetFilesAsync();
+			foreach (string source in collection)
+			{
+				await DependencyService.Get<IFileWorker>().DeleteAsync(source);
+			}
 		}
 	}
 }

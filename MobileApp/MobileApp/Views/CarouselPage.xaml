@@ -9,7 +9,7 @@
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="{Binding Height}"/>
+					<RowDefinition Height="{Binding Width}"/>
 					<RowDefinition Height="100"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
@@ -25,16 +25,30 @@
 						<cv:CarouselView.ItemTemplate>
 							<DataTemplate>
 								<StackLayout>
-									<Image Source="{Binding SourceOfImage}" Aspect="AspectFit" VerticalOptions="CenterAndExpand"/>
+									<Image Source="{Binding Source}" Aspect="AspectFit" VerticalOptions="StartAndExpand"/>
 								</StackLayout>
 							</DataTemplate>
 						</cv:CarouselView.ItemTemplate>
 					</cv:CarouselView>
 				</StackLayout>
-				<StackLayout Grid.Row="2" HorizontalOptions="Start">
-					<ScrollView Orientation="Horizontal" x:Name="Scroll">
-						<StackLayout x:Name="MainStack" Orientation="Horizontal"/>
-					</ScrollView>
+				<StackLayout Grid.Row="2" HorizontalOptions="Center">
+					<RelativeLayout HeightRequest="{Binding Heigth / 4}" WidthRequest="{Binding Width}" Margin="1">
+						<ListView Rotation="270" ItemsSource="{Binding Images}" RowHeight="110" SeparatorVisibility="None" SelectedItem="{Binding CurrentItem}"
+							RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=-30}"
+							RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=-0.5, Constant=30}"
+							RelativeLayout.WidthConstraint="{ConstraintExpression Type=Constant, Constant=95}"
+							RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+							<ListView.ItemTemplate>
+								<DataTemplate>
+									<ViewCell>
+										<ContentView Rotation="90" Padding="1">
+											<Image Source="{Binding Source}"/>
+										</ContentView>
+									</ViewCell>
+								</DataTemplate>
+							</ListView.ItemTemplate>
+						</ListView>
+					</RelativeLayout>
 				</StackLayout>
 				<StackLayout Grid.Row="3">
 					<Button Margin="0,0,0,0" Text="Play" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding PlayCommand}"/>

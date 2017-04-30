@@ -32,7 +32,7 @@ namespace MobileApp.Droid
 			// получаем все все файлы из папки
 			IEnumerable<string> filenames = from filepath in Directory.EnumerateFiles(GetDocsPath())
 											select Path.GetFileName(filepath);
-			return Task<IEnumerable<string>>.FromResult(filenames);
+			return Task.FromResult(filenames);
 		}
 
 		public async Task<string> LoadTextAsync(string filename)
@@ -66,5 +66,7 @@ namespace MobileApp.Droid
 				streamIn.CopyTo(fs);
 			}
 		}
+
+		public string GetLocalFolderPath() => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 	}
 }

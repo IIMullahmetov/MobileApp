@@ -60,5 +60,7 @@ namespace MobileApp.iOS
 			}
 
 		}
+
+		public string GetLocalFolderPath() => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 	}
 }

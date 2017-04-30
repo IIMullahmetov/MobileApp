@@ -1,12 +1,7 @@
 ﻿using MobileApp.Models;
 using MobileApp.Services;
-using PCLStorage;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -14,8 +9,21 @@ namespace MobileApp.ViewModels
 {
     public class CarouselPageViewModel : BaseViewModel
     {
+		private string title;
+		public string Title
+		{
+			get => title;
+			set
+			{
+				title = value;
+				OnPropertyChanged("Title");
+			}
+		}
+		private string path = DependencyService.Get<IFileWorker>().GetLocalFolderPath() + Device.OnPlatform(iOS: "/", Android: "/", WinPhone: "\\");
+		public ObservableCollection<Item> Items { get; set; }
 		public Views.CarouselPage View { get; set; }
-		public int Height => App.Height / 2;
+		public int Height => App.Height;
+		public int Width => App.Width;
 		public ObservableCollection<CarouselItem> Images { get; set; }
 		private CarouselItem currentItem;
 		public CarouselItem CurrentItem
@@ -51,8 +59,12 @@ namespace MobileApp.ViewModels
 		
 		public CarouselPageViewModel(string address)
 		{
+			Items = new ObservableCollection<Item>();
 			Images = new ObservableCollection<CarouselItem>();
-			cc = new ClientConnection(1024, 4); 
+			cc = new ClientConnection(1024, 4)
+			{
+				ViewModel = this
+			};
 			Address = address;
 			AsyncConnection();
 			PlayCommand = new Command(() => AsyncRequest(-3));
@@ -63,24 +75,23 @@ namespace MobileApp.ViewModels
 		public ICommand ExitCommand { get; set; }
 		public ICommand PlayCommand { get; set; }
 		public ICommand StopCommand { get; set; }
+
+		public void SetElement(string source)
+		{
+			lock (Images)
+			{
+				Images.Add(new CarouselItem() { Source = path + source });
+			}
+		}
 		private async void AsyncConnection()
 		{
-			List<ImageSource> list = await cc.Connection(Address);
-			foreach (ImageSource source in list)
-			{
-				Images.Add(new CarouselItem() { Source = source });
-			}
-			IEnumerable<string> collection = await DependencyService.Get<IFileWorker>().GetFilesAsync();
-			string path = DependencyService.Get<IFileWorker>().GetLocalFolderPath() + "\\";
-			foreach (string source in collection)
-			{
-				//DependencyService.Get<IFileWorker>().DeleteAsync(source);
-				Images.Add(new CarouselItem() { Source = path + source, SourceOfImage = path + source });
-			}
-
-			Title = cc.Title;
-			View.SetElements();
-			View.ChangeView();
+			await cc.Connection(Address);
+			//IEnumerable<string> list = await DependencyService.Get<IFileWorker>().GetFilesAsync();
+			//foreach (string source in list)
+			//{
+			//	CarouselItem item = new CarouselItem() { Source = path + source};
+			//	Images.Add(item);
+			//}
 		}
 
 		private void SendCommand()

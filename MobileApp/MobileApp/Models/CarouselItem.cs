@@ -1,12 +1,9 @@
-﻿
-using Xamarin.Forms;
-
-namespace MobileApp.Models
+﻿namespace MobileApp.Models
 {
-    public class CarouselItem : Image
+    public class CarouselItem
     {
 		private string source;
-		public string SourceOfImage
+		public string Source
 		{
 			get => source;
 			set => source = value;
