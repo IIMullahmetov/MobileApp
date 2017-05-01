@@ -15,13 +15,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\ObservableObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\CarouselItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ClientConnection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\ClientImageConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IFileWorker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BaseViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CarouselPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Views\ActivityView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CarouselPage.xaml.cs">
       <DependentUpon>CarouselPage.xaml</DependentUpon>
       <SubType>Code</SubType>

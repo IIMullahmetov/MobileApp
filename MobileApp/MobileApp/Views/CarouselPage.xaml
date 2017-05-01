@@ -9,8 +9,9 @@
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="{Binding Width}"/>
-					<RowDefinition Height="100"/>
+					<RowDefinition Height="400"/>
+					<RowDefinition Height="95"/>
+					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
@@ -31,10 +32,10 @@
 						</cv:CarouselView.ItemTemplate>
 					</cv:CarouselView>
 				</StackLayout>
-				<StackLayout Grid.Row="2" HorizontalOptions="Center">
-					<RelativeLayout HeightRequest="{Binding Heigth / 4}" WidthRequest="{Binding Width}" Margin="1">
+				<StackLayout Grid.Row="2" HorizontalOptions="Center" Margin="0, 20, 0, 0">
+					<RelativeLayout HeightRequest="{Binding Width}" WidthRequest="{Binding Width}" Margin="1">
 						<ListView Rotation="270" ItemsSource="{Binding Images}" RowHeight="110" SeparatorVisibility="None" SelectedItem="{Binding CurrentItem}"
-							RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=-30}"
+							RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=-50}"
 							RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=-0.5, Constant=30}"
 							RelativeLayout.WidthConstraint="{ConstraintExpression Type=Constant, Constant=95}"
 							RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
@@ -42,7 +43,9 @@
 								<DataTemplate>
 									<ViewCell>
 										<ContentView Rotation="90" Padding="1">
-											<Image Source="{Binding Source}"/>
+											<StackLayout>
+												<Image Source="{Binding Source}" Aspect="AspectFit" VerticalOptions="StartAndExpand" Margin="0,18,0,0"/>
+											</StackLayout>
 										</ContentView>
 									</ViewCell>
 								</DataTemplate>
@@ -58,6 +61,9 @@
 				</StackLayout>
 				<StackLayout Grid.Row="5">
 					<Button Margin="0,0,0,5" Text="Exit" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding ExitCommand}"/>
+				</StackLayout>
+				<StackLayout Grid.Row="6">
+					<Button Margin="0,0,0,0" Text="Start Presentation" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding StartCommand }"/>
 				</StackLayout>
 			</Grid>
 		</ScrollView>

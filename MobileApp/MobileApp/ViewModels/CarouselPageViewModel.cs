@@ -9,21 +9,14 @@ namespace MobileApp.ViewModels
 {
     public class CarouselPageViewModel : BaseViewModel
     {
-		private string title;
 		public string Title
 		{
-			get => title;
-			set
-			{
-				title = value;
-				OnPropertyChanged("Title");
-			}
+			get => cc.Title;
 		}
-		private string path = DependencyService.Get<IFileWorker>().GetLocalFolderPath() + Device.OnPlatform(iOS: "/", Android: "/", WinPhone: "\\");
-		public ObservableCollection<Item> Items { get; set; }
+		public string Path { get; private set; } = DependencyService.Get<IFileWorker>().GetLocalFolderPath() + Device.OnPlatform(iOS: "/", Android: "/", WinPhone: "\\");
 		public Views.CarouselPage View { get; set; }
 		public int Height => App.Height;
-		public int Width => App.Width;
+		public int Width => App.Width / 3;
 		public ObservableCollection<CarouselItem> Images { get; set; }
 		private CarouselItem currentItem;
 		public CarouselItem CurrentItem
@@ -37,10 +30,10 @@ namespace MobileApp.ViewModels
 				SendCommand();
 			}
 		}
-		public CarouselItem PreviousItem { get; set; }
+		public CarouselItem PreviousItem { get; set; }	
 		private string Address { get; set; }
 		private ClientConnection cc;
-		private int currentSlide = 1;
+		private int currentSlide;
 		public int CurrentSlide
 		{
 			get => currentSlide;
@@ -59,39 +52,52 @@ namespace MobileApp.ViewModels
 		
 		public CarouselPageViewModel(string address)
 		{
-			Items = new ObservableCollection<Item>();
 			Images = new ObservableCollection<CarouselItem>();
-			cc = new ClientConnection(1024, 4)
-			{
-				ViewModel = this
-			};
 			Address = address;
 			AsyncConnection();
+			CurrentSlide = 1;
 			PlayCommand = new Command(() => AsyncRequest(-3));
 			StopCommand = new Command(() => AsyncRequest(-4));
-			ExitCommand = new Command(() => AsyncRequest(-5));
+			ExitCommand = new Command(async() => 
+			{
+				AsyncRequest(-5);
+				IEnumerable<string> collection = await DependencyService.Get<IFileWorker>().GetFilesAsync();
+				foreach (string source in collection)
+				{
+					DependencyService.Get<IFileWorker>().DeleteAsync(source);
+				}
+				Images.Clear();
+				cc.Shutdown();
+			});
+			StartCommand = new Command(()=>
+			{
+				cc = null;
+				cc = new ClientConnection(1024, 4);
+				AsyncConnection();
+			});
 		}
 		public ICommand LoadItemsCommand { get; set; }
 		public ICommand ExitCommand { get; set; }
 		public ICommand PlayCommand { get; set; }
 		public ICommand StopCommand { get; set; }
-
+		public ICommand StartCommand { get; set; }
 		public void SetElement(string source)
 		{
 			lock (Images)
 			{
-				Images.Add(new CarouselItem() { Source = path + source });
+				CarouselItem item = new CarouselItem() { Source = Path + source };
+				Images.Add(item);
 			}
 		}
+
 		private async void AsyncConnection()
 		{
+			cc = new ClientConnection(1024, 4)
+			{
+				ViewModel = this
+			};
 			await cc.Connection(Address);
-			//IEnumerable<string> list = await DependencyService.Get<IFileWorker>().GetFilesAsync();
-			//foreach (string source in list)
-			//{
-			//	CarouselItem item = new CarouselItem() { Source = path + source};
-			//	Images.Add(item);
-			//}
+			CurrentSlide = 1;
 		}
 
 		private void SendCommand()
@@ -116,12 +122,8 @@ namespace MobileApp.ViewModels
 			try
 			{
 				int code = await cc.Request(message);
-				//Console.WriteLine(code);
 			}
-			catch
-			{
-				//Console.WriteLine(ex.Message);
-			}
+			catch { }
 		}
 
 		private int _position = 0;

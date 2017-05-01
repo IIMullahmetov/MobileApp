@@ -1,14 +1,11 @@
-﻿using MobileApp.Services;
-using MobileApp.ViewModels;
+﻿using MobileApp.ViewModels;
 using PCLStorage;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 //!!!ПЕРЕД ЗАВЕРШЕНИЕМ РАБОТЫ НУЖНО ВЫЗЫВАТЬ Shutdown() - закрытие сокетов
 
@@ -18,6 +15,7 @@ namespace MobileApp.Models
 	{
 		public CarouselPageViewModel ViewModel { private get; set; }
 		public string Title { get; private set; }
+		public int SlidesCount { get; private set; }
 		// Порт
 		private static int port = 1800;
 		// Адрес
@@ -36,11 +34,6 @@ namespace MobileApp.Models
 		private bool uploadingImages = true;
 		//Ответ
 		private int response;
-		//Список изображений
-		private List<ImageSource> images = new List<ImageSource>();
-		//private List<string> sources = new List<string>();
-
-		private ClientImageConverter im = new ClientImageConverter();
 
 		public ClientConnection(int imageBufferLength, int metaBufferLength)
 		{
@@ -49,29 +42,30 @@ namespace MobileApp.Models
 		}
 
 		public Task Connection(object message) => Task.Run(() =>
-																			   {
-																				   Configure((string)message);
-																				   commandEvent = new AutoResetEvent(false);
-																				   try
-																				   {
-																					   Title = GetPresentationName();
-																					   int slidesCount = GetSlidesCount();
-																					   int i = 1;
-																					   while (i <= slidesCount)
-																					   {
-																						   if (ReceiveDistributor(i) == 0)
-																						   {
-																							   i++;
-																						   }
-																					   }
-																					   uploadingImages = false;
-																				   }
-																				   catch
-																				   {
-																					   //Shutdown();
-																				   }
-																				   
-																			   });
+																				{
+																					Configure((string)message);
+																					commandEvent = new AutoResetEvent(false);
+																					try
+																					{
+																						Title = GetPresentationName();
+																						int slidesCount = GetSlidesCount();
+																						SlidesCount = slidesCount;
+																						int i = 1;
+																						while (i <= slidesCount)
+																						{
+																							if (ReceiveDistributor(i) == 0)
+																							{
+																								i++;
+																							}
+																						}
+																						uploadingImages = false;
+																					}
+																					catch
+																					{
+																						Shutdown();
+																					}
+
+																				});
 
 		public void Configure(string IP)
 		{
@@ -117,13 +111,7 @@ namespace MobileApp.Models
 			}
 		}
 
-		public void SetImage(int meta, int i)
-		{
-			byte[] byteImage = ReceiveImage(meta, imageBufferLength);	 
-			Save(byteImage, i);
-			//images.Add(image);
-			
-		}
+		public void SetImage(int meta, int i) => Save(ReceiveImage(meta, imageBufferLength), i);
 
 		private async void Save(byte[] byteImage, int i)
 		{
@@ -164,11 +152,7 @@ namespace MobileApp.Models
 															   return response;
 														   });
 
-		public void SendCode(int message)
-		{
-			byte[] sendBuffer = BitConverter.GetBytes(message); // массив с данными
-			socket.Send(sendBuffer);
-		}
+		public void SendCode(int message) => socket.Send(BitConverter.GetBytes(message));
 
 		public int ReceiveCode()
 		{
@@ -178,18 +162,18 @@ namespace MobileApp.Models
 		}
 
 
-		//public void Shutdown() // освобождаем сокеты
-		//{
-		//	try
-		//	{
-		//		socket.Shutdown(SocketShutdown.Both);
-		//		socket.Close();
-		//	}
-		//	catch (Exception e)
-		//	{
-		//		//Console.WriteLine(e.Message);
-		//	}
-		//}
+		public void Shutdown() // освобождаем сокеты
+		{
+			try
+			{
+				socket.Shutdown(SocketShutdown.Both);
+				socket.Dispose();
+			}
+			catch (Exception)
+			{
+				//Console.WriteLine(e.Message);
+			}
+		}
 
 	}
 
@@ -197,11 +181,8 @@ namespace MobileApp.Models
 	{
 		public async static Task SaveImage(this byte[] image, string fileName, IFolder rootFolder = null)
 		{
-			// get hold of the file system  
 			IFolder folder = rootFolder ?? FileSystem.Current.LocalStorage;
-			// create a file, overwriting any existing file  
 			IFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-			// populate the file with image data  
 			using (System.IO.Stream stream = await file.OpenAsync(FileAccess.ReadAndWrite))
 			{
 				stream.Write(image, 0, image.Length);
@@ -210,12 +191,8 @@ namespace MobileApp.Models
 
 		public async static Task<byte[]> LoadImage(this byte[] image, string fileName, IFolder rootFolder = null)
 		{
-			// get hold of the file system  
 			IFolder folder = rootFolder ?? FileSystem.Current.LocalStorage;
-
-			//open file if exists  
 			IFile file = await folder.GetFileAsync(fileName);
-			//load stream to buffer  
 			using (System.IO.Stream stream = await file.OpenAsync(FileAccess.ReadAndWrite))
 			{
 				long length = stream.Length;

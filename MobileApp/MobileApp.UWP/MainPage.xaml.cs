@@ -7,7 +7,8 @@ namespace MobileApp.UWP
     {
         public MainPage()
         {
-            this.InitializeComponent();
+			InitializeComponent();
+			
 			Rect windowSize = Window.Current.Bounds;
 			double windowHeight = windowSize.Height;
 			double windowWidth = windowSize.Width;
