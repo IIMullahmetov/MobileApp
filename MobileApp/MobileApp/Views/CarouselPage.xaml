@@ -5,67 +5,61 @@
              x:Class="MobileApp.Views.CarouselPage"			 
 			 Title="{Binding Title}">
 	<Grid x:Name="MainGrid">
-		<ScrollView>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="400"/>
-					<RowDefinition Height="95"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
-				<StackLayout  Grid.Row="0" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
-					<Entry Margin="0,5,0,0" Text="{Binding CurrentSlide}" Keyboard="Numeric"/>
-					<Label Margin="0,5,0,0" Text=" / " VerticalOptions="Center"/>
-					<Entry Margin="0,5,0,0" Text="{Binding Images.Count}"  IsEnabled="False" VerticalOptions="Center"/>
-				</StackLayout>
-				<StackLayout Grid.Row="1">
-					<cv:CarouselView x:Name="Carousel" ItemsSource="{Binding Images}" MinimumHeightRequest="150" ItemSelected="CarouselImages_ItemSelected" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White" Position="{Binding Position, Mode=TwoWay}">
-						<cv:CarouselView.ItemTemplate>
-							<DataTemplate>
-								<StackLayout>
-									<Image Source="{Binding Source}" Aspect="AspectFit" VerticalOptions="StartAndExpand"/>
-								</StackLayout>
-							</DataTemplate>
-						</cv:CarouselView.ItemTemplate>
-					</cv:CarouselView>
-				</StackLayout>
-				<StackLayout Grid.Row="2" HorizontalOptions="Center" Margin="0, 20, 0, 0">
-					<RelativeLayout HeightRequest="{Binding Width}" WidthRequest="{Binding Width}" Margin="1">
-						<ListView Rotation="270" ItemsSource="{Binding Images}" RowHeight="110" SeparatorVisibility="None" SelectedItem="{Binding CurrentItem}"
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="10*"/>
+				<RowDefinition Height="45*"/>
+				<RowDefinition Height="20*"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			<StackLayout Grid.Row="0" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+				<Entry Margin="0" Text="{Binding Position}" Keyboard="Numeric"/>
+				<Label Margin="0" Text=" / " VerticalOptions="Center"/>
+				<Entry Margin="0" Text="{Binding SlidesCount}"  IsEnabled="False" VerticalOptions="Center"/>
+			</StackLayout>
+			<StackLayout Grid.Row="1">
+				<cv:CarouselView x:Name="Carousel" ItemsSource="{Binding Images}" MinimumHeightRequest="150" ItemSelected="CarouselImages_ItemSelected" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White"  Position="{Binding Position, Mode=TwoWay}" >
+					<cv:CarouselView.ItemTemplate>
+						<DataTemplate>
+							<StackLayout>
+								<Image Source="{Binding Source}" Aspect="AspectFit" VerticalOptions="StartAndExpand"/>
+							</StackLayout>
+						</DataTemplate>
+					</cv:CarouselView.ItemTemplate>
+				</cv:CarouselView>
+			</StackLayout>
+			<StackLayout Grid.Row="2" HorizontalOptions="Center" Margin="0">
+				<RelativeLayout HeightRequest="{Binding Width}" WidthRequest="{Binding Width}" Margin="1">
+					<ListView Rotation="270" ItemsSource="{Binding Miniatures}" RowHeight="110" SeparatorVisibility="None" SelectedItem="{Binding CurrentItem}"
 							RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=-50}"
 							RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=-0.5, Constant=30}"
 							RelativeLayout.WidthConstraint="{ConstraintExpression Type=Constant, Constant=95}"
 							RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
-							<ListView.ItemTemplate>
-								<DataTemplate>
-									<ViewCell>
-										<ContentView Rotation="90" Padding="1">
-											<StackLayout>
-												<Image Source="{Binding Source}" Aspect="AspectFit" VerticalOptions="StartAndExpand" Margin="0,18,0,0"/>
-											</StackLayout>
-										</ContentView>
-									</ViewCell>
-								</DataTemplate>
-							</ListView.ItemTemplate>
-						</ListView>
-					</RelativeLayout>
-				</StackLayout>
-				<StackLayout Grid.Row="3">
-					<Button Margin="0,0,0,0" Text="Play" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding PlayCommand}"/>
-				</StackLayout>
-				<StackLayout Grid.Row="4">
-					<Button Margin="0,0,0,0" Text="Stop" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding StopCommand}"/>
-				</StackLayout>
-				<StackLayout Grid.Row="5">
-					<Button Margin="0,0,0,5" Text="Exit" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding ExitCommand}"/>
-				</StackLayout>
-				<StackLayout Grid.Row="6">
-					<Button Margin="0,0,0,0" Text="Start Presentation" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding StartCommand }"/>
-				</StackLayout>
-			</Grid>
-		</ScrollView>
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<ViewCell>
+									<ContentView Rotation="90" Padding="1">
+										<StackLayout>
+											<Image Source="{Binding Source}" Aspect="AspectFit" VerticalOptions="StartAndExpand" Margin="0,18,0,0"/>
+										</StackLayout>
+									</ContentView>
+								</ViewCell>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+				</RelativeLayout>
+			</StackLayout>
+			<StackLayout Grid.Row="3">
+				<Button Margin="0" Text="Play" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding PlayCommand}"/>
+			</StackLayout>
+			<StackLayout Grid.Row="4">
+				<Button Margin="0" Text="Stop" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding StopCommand}"/>
+			</StackLayout>
+			<StackLayout Grid.Row="5">
+				<Button Margin="0" Text="Exit" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding ExitCommand}"/>
+			</StackLayout>
+		</Grid>
 	</Grid>
 </ContentPage>

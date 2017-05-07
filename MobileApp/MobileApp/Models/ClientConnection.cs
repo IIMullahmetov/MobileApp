@@ -1,11 +1,13 @@
-﻿using MobileApp.ViewModels;
-using PCLStorage;
+﻿using MobileApp.Services;
+using MobileApp.ViewModels;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 //!!!ПЕРЕД ЗАВЕРШЕНИЕМ РАБОТЫ НУЖНО ВЫЗЫВАТЬ Shutdown() - закрытие сокетов
 
@@ -13,9 +15,10 @@ namespace MobileApp.Models
 {
 	public class ClientConnection
 	{
+		public string Path { get; private set; }
 		public CarouselPageViewModel ViewModel { private get; set; }
 		public string Title { get; private set; }
-		public int SlidesCount { get; private set; }
+		public int SlidesCount { get; set; }
 		// Порт
 		private static int port = 1800;
 		// Адрес
@@ -43,6 +46,7 @@ namespace MobileApp.Models
 
 		public Task Connection(object message) => Task.Run(() =>
 																				{
+																					Path = DependencyService.Get<IFileWorker>().GetLocalFolderPath() + Device.OnPlatform(iOS: "/", Android: "/", WinPhone: "\\");
 																					Configure((string)message);
 																					commandEvent = new AutoResetEvent(false);
 																					try
@@ -62,7 +66,7 @@ namespace MobileApp.Models
 																					}
 																					catch
 																					{
-																						Shutdown();
+																						//Shutdown();
 																					}
 
 																				});
@@ -113,10 +117,14 @@ namespace MobileApp.Models
 
 		public void SetImage(int meta, int i) => Save(ReceiveImage(meta, imageBufferLength), i);
 
-		private async void Save(byte[] byteImage, int i)
+		private void Save(byte[] byteImage, int i)
 		{
-			string fileName = "slide_" + i + ".png";
-			await byteImage.SaveImage(fileName);
+			string fileName = "slide_" + i + ".jpg";
+			Stream streamIn = new MemoryStream(byteImage);
+			using (FileStream fileStream = new FileStream(Path + fileName, FileMode.Create, System.IO.FileAccess.Write))
+			{
+				streamIn.CopyTo(fileStream);
+			}
 			ViewModel.SetElement(fileName);
 		}
 			
@@ -175,32 +183,5 @@ namespace MobileApp.Models
 			}
 		}
 
-	}
-
-	public static class WorkWithSorage
-	{
-		public async static Task SaveImage(this byte[] image, string fileName, IFolder rootFolder = null)
-		{
-			IFolder folder = rootFolder ?? FileSystem.Current.LocalStorage;
-			IFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-			using (System.IO.Stream stream = await file.OpenAsync(FileAccess.ReadAndWrite))
-			{
-				stream.Write(image, 0, image.Length);
-			}
-		}
-
-		public async static Task<byte[]> LoadImage(this byte[] image, string fileName, IFolder rootFolder = null)
-		{
-			IFolder folder = rootFolder ?? FileSystem.Current.LocalStorage;
-			IFile file = await folder.GetFileAsync(fileName);
-			using (System.IO.Stream stream = await file.OpenAsync(FileAccess.ReadAndWrite))
-			{
-				long length = stream.Length;
-				byte[] streamBuffer = new byte[length];
-				stream.Read(streamBuffer, 0, (int)length);
-				return streamBuffer;
-			}
-
-		}
 	}
 }

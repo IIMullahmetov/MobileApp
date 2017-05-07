@@ -12,6 +12,5 @@ namespace MobileApp.Services
 		Task<string> LoadTextAsync(string filename);  // загрузка текста из файла
 		Task<IEnumerable<string>> GetFilesAsync();  // получение файлов из определнного каталога
 		Task DeleteAsync(string filename);  // удаление файла
-		void WriteStream(string filename, Stream streamIn);
 	}
 }

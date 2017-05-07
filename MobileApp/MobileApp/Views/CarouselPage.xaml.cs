@@ -1,4 +1,5 @@
-﻿using MobileApp.Models; 
+﻿using HorizontalList;
+using MobileApp.Models; 
 using MobileApp.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -12,9 +13,15 @@ namespace MobileApp.Views
 
 		public CarouselPage(CarouselPageViewModel viewModel)
 		{
+			
 			InitializeComponent();
 			BindingContext = ViewModel = viewModel;
 			ViewModel.View = this;
+		}
+
+		public void Set(string source)
+		{
+			//StackL.Children.Add(new Image() { Source = source });
 		}
 
 		private void CarouselImages_ItemSelected(object sender, SelectedItemChangedEventArgs e)

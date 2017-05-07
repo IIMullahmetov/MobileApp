@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Xamarin.Forms;
-using System.IO;
 
 [assembly: Dependency(typeof(MobileApp.UWP.FileWorker))]
 namespace MobileApp.UWP
@@ -59,20 +58,9 @@ namespace MobileApp.UWP
 			// получаем локальную папку
 			StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 			// создаем файл hello.txt
-			StorageFile helloFile = await localFolder.CreateFileAsync(filename,
-CreationCollisionOption.ReplaceExisting);
+			StorageFile helloFile = await localFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
 			// запись в файл
 			await FileIO.WriteTextAsync(helloFile, text);
-		}
-
-		public void WriteStream(string filename, Stream streamIn)
-		{
-			string filePath = ApplicationData.Current.LocalFolder.Name + filename;
-			using (FileStream fs = File.Create(filePath))
-			{
-				streamIn.CopyTo(fs);
-			}
-
 		}
 	}
 }

@@ -29,7 +29,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <OutputPath>bin\ARM\Release\</OutputPath>
@@ -139,15 +139,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Resources\Slides\Image_01.png" />
-    <Content Include="Resources\Slides\Image_10.png" />
-    <Content Include="Resources\Slides\Image_09.png" />
-    <Content Include="Resources\Slides\Image_08.png" />
-    <Content Include="Resources\Slides\Image_07.png" />
-    <Content Include="Resources\Slides\Image_06.png" />
-    <Content Include="Resources\Slides\Image_05.png" />
-    <Content Include="Resources\Slides\Image_04.png" />
-    <Content Include="Resources\Slides\Image_03.png" />
-    <Content Include="Resources\Slides\Image_02.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

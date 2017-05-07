@@ -1,5 +1,6 @@
 ﻿using MobileApp.Services;
 using System.Collections.Generic;
+using Xamarin.CustomControls;
 using Xamarin.Forms;
 
 namespace MobileApp.ViewModels
@@ -30,7 +31,7 @@ namespace MobileApp.ViewModels
 		public ItemsViewModel()
 		{
 			Title = "Browse";
-			Address = "192.168.0.105";
+			Address = "192.168.0.101";
 		}
 
 		public async void ClearFolder()

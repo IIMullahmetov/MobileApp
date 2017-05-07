@@ -5,7 +5,7 @@
 			 xmlns:controls="clr-namespace:MobileApp.Controls"
 			 Title="Presenter">
 	<ContentPage.Content>
-		<StackLayout>
+		<StackLayout x:Name="stack">
 			<Entry x:Name="Address" Margin="0,5,0,0" Text="{Binding Address}" HorizontalTextAlignment="Center"/>
 			<Button Margin="0,5,0,0" Text="Connect" Clicked="Button_Clicked" BackgroundColor="{StaticResource Primary}" TextColor="White"/>
 		</StackLayout>

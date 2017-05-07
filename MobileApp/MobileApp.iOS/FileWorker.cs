@@ -51,16 +51,6 @@ namespace MobileApp.iOS
 
 		string GetFilePath(string filename) => Path.Combine(GetDocsPath(), filename);
 		string GetDocsPath() => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-		public void WriteStream(string filename, Stream streamIn)
-		{
-			string filePath = GetFilePath(filename);
-			using (FileStream fs = File.Create(filePath))
-			{
-				streamIn.CopyTo(fs);
-			}
-
-		}
-
 		public string GetLocalFolderPath() => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 	}
 }

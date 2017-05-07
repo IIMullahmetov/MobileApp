@@ -29,8 +29,6 @@ namespace MobileApp.Droid
 			global::PCLStorage.Resource.String.ApplicationName = global::MobileApp.Droid.Resource.String.ApplicationName;
 			global::PCLStorage.Resource.String.Hello = global::MobileApp.Droid.Resource.String.Hello;
 			global::Xamarin.Forms.Platform.Android.Resource.Attribute.actionBarSize = global::MobileApp.Droid.Resource.Attribute.actionBarSize;
-			global::XLabs.Platform.Resource.String.ApplicationName = global::MobileApp.Droid.Resource.String.ApplicationName;
-			global::XLabs.Platform.Resource.String.Hello = global::MobileApp.Droid.Resource.String.Hello;
 		}
 		
 		public partial class Animation
