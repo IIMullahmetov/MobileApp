@@ -46,6 +46,7 @@ namespace MobileApp.Models
 
 		public Task Connection(object message) => Task.Run(() =>
 																				{
+
 																					Path = DependencyService.Get<IFileWorker>().GetLocalFolderPath() + Device.OnPlatform(iOS: "/", Android: "/", WinPhone: "\\");
 																					Configure((string)message);
 																					commandEvent = new AutoResetEvent(false);
@@ -120,11 +121,16 @@ namespace MobileApp.Models
 		private void Save(byte[] byteImage, int i)
 		{
 			string fileName = "slide_" + i + ".jpg";
-			Stream streamIn = new MemoryStream(byteImage);
-			using (FileStream fileStream = new FileStream(Path + fileName, FileMode.Create, System.IO.FileAccess.Write))
+			try
 			{
-				streamIn.CopyTo(fileStream);
+				Stream streamIn = new MemoryStream(byteImage);
+				using (FileStream fileStream = new FileStream(Path + fileName, FileMode.Create, System.IO.FileAccess.Write))
+				{
+					streamIn.CopyTo(fileStream);
+				}
 			}
+			catch { Console.WriteLine("Write Error"); }
+			
 			ViewModel.SetElement(fileName);
 		}
 			

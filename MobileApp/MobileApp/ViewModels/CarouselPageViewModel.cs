@@ -1,6 +1,5 @@
 ﻿using MobileApp.Models;
 using MobileApp.Services;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -9,18 +8,6 @@ namespace MobileApp.ViewModels
 {
     public class CarouselPageViewModel : BaseViewModel
     {
-		public int SlidesCount
-		{
-			get => cc.SlidesCount;
-			set
-			{
-				cc.SlidesCount = value;
-				OnPropertyChanged("SlidesCount");
-			}
-		}
-
-		public ObservableCollection<CarouselItem> Miniatures { get; set; }
-
 		public string Title
 		{
 			get => cc.Title;
@@ -29,6 +16,7 @@ namespace MobileApp.ViewModels
 		public Views.CarouselPage View { get; set; }
 		public int Height => App.Height;
 		public int Width => App.Width / 3;
+		public ObservableCollection<CarouselItem> Minis { get; set; }
 		public ObservableCollection<CarouselItem> Images { get; set; }
 		private CarouselItem currentItem;
 		public CarouselItem CurrentItem
@@ -60,28 +48,12 @@ namespace MobileApp.ViewModels
 		
 		public CarouselPageViewModel(string address)
 		{
-			Miniatures = new ObservableCollection<CarouselItem>();
-			Images = new ObservableCollection<CarouselItem>() { new CarouselItem() { Source = "Resources\\Slides\\Image_01.png" } };
+			Minis = new ObservableCollection<CarouselItem>();
+			Images = new ObservableCollection<CarouselItem>() { new CarouselItem() { Source = "Image_01.png" } };
 			Address = address;
 			AsyncConnection();
 			PlayCommand = new Command(() => AsyncRequest(-3));
 			StopCommand = new Command(() => AsyncRequest(-4));
-			ExitCommand = new Command(async() => 
-			{
-				AsyncRequest(-5);
-				IEnumerable<string> collection = await DependencyService.Get<IFileWorker>().GetFilesAsync();
-				foreach (string source in collection)
-				{
-					DependencyService.Get<IFileWorker>().DeleteAsync(source);
-				}
-				Images.Clear();
-			});
-			StartCommand = new Command(()=>
-			{
-				cc = null;
-				cc = new ClientConnection(1024, 4);
-				AsyncConnection();
-			});
 		}
 		public ICommand LoadItemsCommand { get; set; }
 		public ICommand ExitCommand { get; set; }
@@ -91,9 +63,8 @@ namespace MobileApp.ViewModels
 		public void SetElement(string source)
 		{
 			CarouselItem item = new CarouselItem() { Source = Path + source };
-			//View.Set(item.Source);
-			Miniatures.Add(item);
 			Images.Add(item);
+			Minis.Add(item);
 		}
 
 		private async void AsyncConnection()
@@ -135,7 +106,7 @@ namespace MobileApp.ViewModels
 		{
 			if(await cc.Request(message) == -1)
 			{
-				currentItem = Images[Position- 1];
+				currentItem = Images[Position];
 			}
 		}
 
@@ -152,5 +123,6 @@ namespace MobileApp.ViewModels
 				OnPropertyChanged("Position");
 			}
 		}
+
 	}
 }

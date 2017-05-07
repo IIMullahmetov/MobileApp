@@ -1,6 +1,9 @@
 ﻿using HorizontalList;
-using MobileApp.Models; 
+using MobileApp.Models;
+using MobileApp.Services;
 using MobileApp.ViewModels;
+using System;
+using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -19,9 +22,19 @@ namespace MobileApp.Views
 			ViewModel.View = this;
 		}
 
-		public void Set(string source)
+		private async void Button_Clicked(object sender, EventArgs e)
 		{
-			//StackL.Children.Add(new Image() { Source = source });
+			ClearFolder();
+			await Navigation.PopAsync();
+		}
+
+		private async void ClearFolder()
+		{
+			IEnumerable<string> collection = await DependencyService.Get<IFileWorker>().GetFilesAsync();
+			foreach (string source in collection)
+			{
+				await DependencyService.Get<IFileWorker>().DeleteAsync(source);
+			}
 		}
 
 		private void CarouselImages_ItemSelected(object sender, SelectedItemChangedEventArgs e)

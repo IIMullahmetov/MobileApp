@@ -24,7 +24,7 @@ namespace MobileApp.Droid
 			string filepath = GetFilePath(filename);
 			// существует ли файл
 			bool exists = File.Exists(filepath);
-			return Task<bool>.FromResult(exists);
+			return Task.FromResult(exists);
 		}
 
 		public Task<IEnumerable<string>> GetFilesAsync()
