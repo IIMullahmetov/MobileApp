@@ -2,80 +2,52 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:cv="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.CarouselView"
-             x:Class="MobileApp.Views.CarouselPage"			 
+             x:Class="MobileApp.Views.CarouselPage"		
+			 xmlns:control="clr-namespace:CarouselView.FormsPlugin.Abstractions;assembly=CarouselView.FormsPlugin.Abstractions"
 			 Title="{Binding Title}">
 	<Grid x:Name="MainGrid">
 		<Grid>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="10*"/>
-				<RowDefinition Height="65*"/>
-				<RowDefinition Height="25*"/>
 				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="2*"/>
+				<RowDefinition Height="*"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 			<StackLayout Grid.Row="0" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
-				<Entry Text="{Binding Position}" Keyboard="Numeric" MinimumWidthRequest="30"/>
+				<Entry Text="{Binding Position}" Keyboard="Numeric" MinimumWidthRequest="50"/>
 				<Label Text=" / " VerticalOptions="Center"/>
-				<Entry Text="{Binding Minis.Count}"  IsEnabled="False" VerticalOptions="Center" MinimumWidthRequest="30"/>
+				<Entry Text="{Binding Count}"  IsEnabled="False" VerticalOptions="Center" MinimumWidthRequest="50" Keyboard="Numeric"/>
 			</StackLayout>
-			<cv:CarouselView Grid.Row="1" x:Name="Carousel" ItemsSource="{Binding Images}" MinimumHeightRequest="150" ItemSelected="CarouselImages_ItemSelected" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White"  Position="{Binding Position, Mode=TwoWay}" >
-				<cv:CarouselView.ItemTemplate>
+			<control:CarouselViewControl Margin="1" Position="{Binding Position}" Orientation="Horizontal" ItemsSource="{Binding Images}" Grid.Row="1">
+				<control:CarouselViewControl.ItemTemplate>
 					<DataTemplate>
-						<StackLayout VerticalOptions="Center">
-							<Image Source="{Binding Source}" Aspect="AspectFill" VerticalOptions="StartAndExpand"/>
+						<StackLayout VerticalOptions="CenterAndExpand">
+							<Image Source="{Binding Source}" Aspect="AspectFit"/>
 						</StackLayout>
 					</DataTemplate>
-				</cv:CarouselView.ItemTemplate>
-			</cv:CarouselView>
-			<!--<StackLayout Grid.Row="2">
-				<Controls:List ItemsSource="{Binding Miniatures}" ListOrientation="Horizontal">
-					<Controls:List.ItemTemplate>
-						<DataTemplate>
-							<Image Source="{Binding Source}" Aspect="AspectFit" VerticalOptions="StartAndExpand"/>
-						</DataTemplate>
-					</Controls:List.ItemTemplate>					
-				</Controls:List>
-			</StackLayout>-->
-			<!--<StackLayout Grid.Row="2" HorizontalOptions="Center" Margin="0,0,0,0">
-				<AbsoluteLayout x:Name="MessagesLayoutFrame" Padding="0" HorizontalOptions="FillAndExpand">
-					<ContentView x:Name="MessagesLayoutFrameInner"  Padding="0"  HorizontalOptions="FillAndExpand">
-						<ListView x:Name="MessagesListView" ItemsSource="{Binding Images}" RowHeight="240" VerticalOptions="Start" HeightRequest="240" WidthRequest="240" SeparatorVisibility="None" Rotation="270" HorizontalOptions="Center">
-							<ListView.ItemTemplate>
-								<DataTemplate>
-									<ViewCell>
-										<ContentView Rotation="90" Padding="12">
-											<Image Source="{Binding Source}" Aspect="AspectFill" />
-										</ContentView>
-									</ViewCell>
-								</DataTemplate>
-							</ListView.ItemTemplate>
-						</ListView>
-					</ContentView>
-				</AbsoluteLayout>-->
-				<RelativeLayout HeightRequest="{Binding Width}" WidthRequest="{Binding Width}" Margin="1" Grid.Row="2">
-					<ListView Rotation="270" ItemsSource="{Binding Minis}" RowHeight="100" SeparatorVisibility="None" SelectedItem="{Binding CurrentItem}" BackgroundColor="White" SeparatorColor="White"
+				</control:CarouselViewControl.ItemTemplate>
+			</control:CarouselViewControl>
+			<RelativeLayout Grid.Row="2">
+				<ListView Rotation="270" ItemsSource="{Binding Minis}" RowHeight="100" SeparatorVisibility="None" SelectedItem="{Binding CurrentItem}" BackgroundColor="White" SeparatorColor="White"
 							RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=-50}"
 							RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=-0.45, Constant=30}"
 							RelativeLayout.WidthConstraint="{ConstraintExpression Type=Constant, Constant=100}"
 							RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
-						<ListView.ItemTemplate>
-							<DataTemplate>
-								<ViewCell>
-									<ContentView Rotation="90" Padding="1">
-										<StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="Center">
-											<Image Source="{Binding Source}" Aspect="AspectFit"/>
-										</StackLayout>
-									</ContentView>
-								</ViewCell>
-							</DataTemplate>
-						</ListView.ItemTemplate>
-					</ListView>
-				</RelativeLayout>
-			<!--</StackLayout>-->
-			<Button Grid.Row="3" Text="Play" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding PlayCommand}"/>
-			<Button Grid.Row="4" Text="Stop" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding StopCommand}"/>
-			<Button Grid.Row="5" Text="Exit" BackgroundColor="{StaticResource Primary}" TextColor="White" Clicked="Button_Clicked"/>
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<ViewCell>
+								<ContentView Rotation="90" Padding="1">
+									<Image Source="{Binding Source}" Aspect="AspectFit"/>
+								</ContentView>
+							</ViewCell>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</RelativeLayout>
+			<StackLayout Grid.Row="3" >
+				<Button Text="Play" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding PlayCommand}"/>
+				<Button Text="Stop" BackgroundColor="{StaticResource Primary}" TextColor="White" Command="{Binding StopCommand}"/>
+			</StackLayout>
 		</Grid>
 	</Grid>
 </ContentPage>

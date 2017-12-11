@@ -1,7 +1,5 @@
-﻿using MobileApp.Services;
-using MobileApp.ViewModels;
+﻿using MobileApp.ViewModels;
 using System;
-using System.Collections.ObjectModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -16,7 +14,6 @@ namespace MobileApp.Views
 		{
 			InitializeComponent();
 			BindingContext = viewModel = new ItemsViewModel();
-			viewModel.ClearFolder();
 		}
 		
 		private async void Button_Clicked(object sender, EventArgs e) => 

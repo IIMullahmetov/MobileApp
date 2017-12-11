@@ -1,11 +1,6 @@
-﻿using MobileApp.Services;
-using System.Collections.Generic;
-using Xamarin.CustomControls;
-using Xamarin.Forms;
-
-namespace MobileApp.ViewModels
+﻿namespace MobileApp.ViewModels
 {
-    public class ItemsViewModel : BaseViewModel
+	public class ItemsViewModel : BaseViewModel
     {
 		private string title;
 		public string Title
@@ -31,16 +26,7 @@ namespace MobileApp.ViewModels
 		public ItemsViewModel()
 		{
 			Title = "Browse";
-			Address = "192.168.0.101";
-		}
-
-		public async void ClearFolder()
-		{
-			IEnumerable<string> collection = await DependencyService.Get<IFileWorker>().GetFilesAsync();
-			foreach (string source in collection)
-			{
-				await DependencyService.Get<IFileWorker>().DeleteAsync(source);
-			}
+			Address = "192.168.0.103";
 		}
 	}
 }

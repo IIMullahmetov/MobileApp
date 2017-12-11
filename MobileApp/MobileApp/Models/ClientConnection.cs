@@ -1,6 +1,7 @@
 ﻿using MobileApp.Services;
 using MobileApp.ViewModels;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -16,9 +17,10 @@ namespace MobileApp.Models
 	public class ClientConnection
 	{
 		public string Path { get; private set; }
-		public CarouselPageViewModel ViewModel { private get; set; }
+		public ObservableCollection<CarouselItem> Items { get; private set; } = new ObservableCollection<CarouselItem> { new CarouselItem { Source = ImageSource.FromFile(@"swap.png") } };
+		//public CarouselPageViewModel ViewModel { private get; set; }
 		public string Title { get; private set; }
-		public int SlidesCount { get; set; }
+		public int SlidesCount { get; private set; }
 		// Порт
 		private static int port = 1800;
 		// Адрес
@@ -115,25 +117,24 @@ namespace MobileApp.Models
 				return 0;
 			}
 		}
-
 		public void SetImage(int meta, int i) => Save(ReceiveImage(meta, imageBufferLength), i);
 
 		private void Save(byte[] byteImage, int i)
 		{
-			string fileName = "slide_" + i + ".jpg";
-			try
-			{
-				Stream streamIn = new MemoryStream(byteImage);
-				using (FileStream fileStream = new FileStream(Path + fileName, FileMode.Create, System.IO.FileAccess.Write))
-				{
-					streamIn.CopyTo(fileStream);
-				}
-			}
-			catch { Console.WriteLine("Write Error"); }
-			
-			ViewModel.SetElement(fileName);
+			//string fileName = "slide_" + i + ".jpg";
+			//try
+			//{
+			//	Stream streamIn = new MemoryStream(byteImage);
+			//	using (FileStream fileStream = new FileStream(Path + fileName, FileMode.Create, System.IO.FileAccess.Write))
+			//	{
+			//		streamIn.CopyTo(fileStream);
+			//	}
+			//}
+			//catch { Console.WriteLine("Write Error"); }
+			//ViewModel.SetElement(fileName);
+			Items.Add(new CarouselItem { Source = ImageSource.FromStream(() => new MemoryStream(byteImage)) });
 		}
-			
+
 		public byte[] ReceiveImage(int countBytes, int bufferLength)
 		{
 			//Console.WriteLine("countBytes - " + countBytes);

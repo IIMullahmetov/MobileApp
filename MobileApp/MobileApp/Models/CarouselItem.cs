@@ -1,12 +1,12 @@
-﻿namespace MobileApp.Models
+﻿using System.IO;
+using Xamarin.Forms;
+
+namespace MobileApp.Models
 {
     public class CarouselItem
     {
-		private string source;
-		public string Source
-		{
-			get => source;
-			set => source = value;
-		}
+		//public byte[] Source { get; set; }
+
+		public ImageSource Source { get; set; }
 	}
 }

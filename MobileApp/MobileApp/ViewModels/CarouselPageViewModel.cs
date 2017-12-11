@@ -1,110 +1,86 @@
 ﻿using MobileApp.Models;
-using MobileApp.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace MobileApp.ViewModels
 {
-    public class CarouselPageViewModel : BaseViewModel
-    {
-		public string Title
-		{
-			get => cc.Title;
-		}
-		public string Path { get; private set; } = DependencyService.Get<IFileWorker>().GetLocalFolderPath() + Device.OnPlatform(iOS: "/", Android: "/", WinPhone: "\\");
-		public Views.CarouselPage View { get; set; }
-		public int Height => App.Height;
-		public int Width => App.Width / 3;
+	public class CarouselPageViewModel : BaseViewModel
+	{
+		public string Title => cc.Title;
+		public int Count => cc.SlidesCount;
+		
 		public ObservableCollection<CarouselItem> Minis { get; set; }
-		public ObservableCollection<CarouselItem> Images { get; set; }
+
+		public ObservableCollection<CarouselItem> Images => cc.Items;
 		private CarouselItem currentItem;
 		public CarouselItem CurrentItem
 		{
 			get => currentItem;
 			set
 			{
-				PreviousItem = CurrentItem;
-				currentItem = value;
-				SendCommand();
-				Position = Images.IndexOf(currentItem);
+				try
+				{
+					currentItem = value;
+					Position = Images.IndexOf(currentItem);
+					OnPropertyChanged("CurrentItem");
+				}
+				catch { }
 			}
 		}
-		public CarouselItem PreviousItem { get; set; }	
+
 		private string Address { get; set; }
-		private ClientConnection cc;
-		//public int CurrentSlide
-		//{
-		//	get => Position + 1;
-		//	set
-		//	{
-		//		if (value > 0 && value <= Images.Count)
-		//		{
-		//			Position = value - 1;
-		//		}			
-		//		OnPropertyChanged("CurrentSlide");
-		//	}
-		//}
-		
+		private ClientConnection cc = new ClientConnection(1024, 4);
+		public int CurrentSlide
+		{
+			get => Position + 1;
+			set
+			{
+				if (value > 0 && value <= Images.Count)
+				{
+					Position = value - 1;
+				}
+				OnPropertyChanged("CurrentSlide");
+			}
+		}
+
 		public CarouselPageViewModel(string address)
 		{
 			Minis = new ObservableCollection<CarouselItem>();
-			Images = new ObservableCollection<CarouselItem>() { new CarouselItem() { Source = "Image_01.png" } };
 			Address = address;
 			AsyncConnection();
 			PlayCommand = new Command(() => AsyncRequest(-3));
 			StopCommand = new Command(() => AsyncRequest(-4));
 		}
-		public ICommand LoadItemsCommand { get; set; }
-		public ICommand ExitCommand { get; set; }
+		
 		public ICommand PlayCommand { get; set; }
 		public ICommand StopCommand { get; set; }
-		public ICommand StartCommand { get; set; }
-		public void SetElement(string source)
-		{
-			CarouselItem item = new CarouselItem() { Source = Path + source };
-			Images.Add(item);
-			Minis.Add(item);
-		}
 
 		private async void AsyncConnection()
 		{
-			cc = new ClientConnection(1024, 4)
-			{
-				ViewModel = this
-			};
 			await cc.Connection(Address);
+			for (int i = 1; i < Images.Count; i++)
+			{
+				Minis.Add(Images[i]);
+			}
 		}
 
-		private void SendCommand()
+		private void SendCommand(int number)
 		{
-			if(PreviousItem == null)
-			{
-				return;
-			}
-			int number;
-			try
-			{
-				number = Images.IndexOf(PreviousItem) - Images.IndexOf(CurrentItem);
-			}
-			catch { return; }
 			switch (number)
 			{
 				case -1:
 					AsyncRequest(-1);
-					break;
-				case 1:
-					AsyncRequest(-2);
 					break;
 				default:
 					AsyncRequest(Position);
 					break;
 			}
 		}
-
+		
 		private async void AsyncRequest(int message)
 		{
-			if(await cc.Request(message) == -1)
+			if (await cc.Request(message) == -1)
 			{
 				currentItem = Images[Position];
 			}
@@ -116,9 +92,10 @@ namespace MobileApp.ViewModels
 			get => _position;
 			set
 			{
-				if(value > 0 && value <= Images.Count)
+				if (value > 0 && value <= Images.Count)
 				{
 					_position = value;
+					SendCommand(value);
 				}
 				OnPropertyChanged("Position");
 			}
