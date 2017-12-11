@@ -53,8 +53,8 @@ namespace MobileApp.ViewModels
 			StopCommand = new Command(() => AsyncRequest(-4));
 		}
 		
-		public ICommand PlayCommand { get; set; }
-		public ICommand StopCommand { get; set; }
+		public ICommand PlayCommand { get; private set; }
+		public ICommand StopCommand { get; private set; }
 
 		private async void AsyncConnection()
 		{

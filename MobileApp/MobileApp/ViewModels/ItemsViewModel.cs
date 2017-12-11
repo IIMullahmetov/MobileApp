@@ -1,7 +1,21 @@
-﻿namespace MobileApp.ViewModels
+﻿using System.Net;
+
+namespace MobileApp.ViewModels
 {
 	public class ItemsViewModel : BaseViewModel
     {
+		private bool isCorrect = false;
+
+		public bool IsCorrect
+		{
+			get => isCorrect;
+			set
+			{
+				isCorrect = IPAddress.TryParse(Address, out IPAddress address);
+				OnPropertyChanged("IsCorrect");
+			}
+		}
+
 		private string title;
 		public string Title
 		{
@@ -12,13 +26,14 @@
 				OnPropertyChanged("Title");
 			}
 		}
-		private string address;
+		private string address = string.Empty;
 		public string Address
 		{
 			get => address;
 			set
 			{
 				address = value;
+				IsCorrect = false;
 				OnPropertyChanged("Address");
 			}
 		}
