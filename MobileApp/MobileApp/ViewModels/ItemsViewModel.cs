@@ -41,7 +41,7 @@ namespace MobileApp.ViewModels
 		public ItemsViewModel()
 		{
 			Title = "Browse";
-			Address = "192.168.0.103";
+			Address = "192.168.137.131";
 		}
 	}
 }

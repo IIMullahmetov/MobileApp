@@ -50,7 +50,7 @@ namespace MobileApp.ViewModels
 			Address = address;
 			AsyncConnection();
 			PlayCommand = new Command(() => AsyncRequest(-3));
-			StopCommand = new Command(() => AsyncRequest(-4));
+			StopCommand = new Command(() => { Position = 1; AsyncRequest(-4); });
 		}
 		
 		public ICommand PlayCommand { get; private set; }
